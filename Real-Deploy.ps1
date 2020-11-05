@@ -34,7 +34,6 @@ Invoke-WebRequest -Uri $url -Outfile $output
 <# Begin Installing Automate with Server Name and Location ID#>
 
 Write-host "====== $output -Server $servername -LocationID $locationID ======"
-pause
 $SoftwareFullPath=$output
 
 $InstallExitCode = (Start-Process "msiexec.exe" -ArgumentList "/i $($SoftwareFullPath) /quiet /norestart /L*V $($LogFullPath)" -NoNewWindow -Wait -PassThru).ExitCode
