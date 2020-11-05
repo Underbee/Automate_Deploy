@@ -33,8 +33,9 @@ Invoke-WebRequest -Uri $url -Outfile $output
 
 <# Begin Installing Automate with Server Name and Location ID#>
 
-Write-host "====== $output -Server $servername -LocationID $locationID ======"
+
 $SoftwareFullPath=$output
+Write-host "Automate Downloaded!"
 
 $InstallExitCode = (Start-Process "msiexec.exe" -ArgumentList "/i $($SoftwareFullPath) /quiet /norestart /L*V $($LogFullPath)" -NoNewWindow -Wait -PassThru).ExitCode
 If ($InstallExitCode -eq 0) {
@@ -51,4 +52,4 @@ If ($InstallExitCode -eq 0) {
     Write-Host "Automate Installer Exit Code: $InstallExitCode" -ForegroundColor Yellow
     Write-Host "Automate Installer Logs: $LogFullPath" -ForegroundColor Yellow
 }# End Else
-Write-Host "Function Ran"
+Write-Host "Automate Installed!"
