@@ -1,6 +1,15 @@
-<# Install Automate#>
 $url = "https://github.com/Underbee/Automate_Deploy/blob/main/Agent_Install_universal.exe"
 $output = "C:\Support\Automate"
+function Install-Automate {
+    param (
+        $servername=$args[0]
+        $locationID=$args[1]
+        $SoftwareFullPath = $output
+        $LogFullPath= 'C:\temp\AutomateLog'
+    )    
+
+<# Install Automate#>
+
 if (-not (Test-Path C:\Support\Automate -PathType Container)) {
     Try {mkdir "C:\Support\Automate"}
     catch {Write-Error -Message "Unable to create Automate Directory, Download impossible!"}
@@ -28,10 +37,7 @@ if ( -not ("TrustAllCertsPolicy" -as [type])) {
 Invoke-WebRequest -Uri $url -Outfile $output
 
 <# Begin Installing Automate with Server Name and Location ID#>
-$servername=$args[0]
-$locationID=$args[1]
-$SoftwareFullPath = $output
-$LogFullPath= 'C:\temp\AutomateLog'
+
 Write-host "====== $output -Server $servername -LocationID $locationID ======"
 pause
 $InstallExitCode = (Start-Process "msiexec.exe" -ArgumentList "/i $($SoftwareFullPath) /quiet /norestart LOCATION=$($LocationID) SERVERADDRESS=$($servername) /L*V $($LogFullPath)" -NoNewWindow -Wait -PassThru).ExitCode
