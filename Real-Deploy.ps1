@@ -31,7 +31,7 @@ if ( -not ("TrustAllCertsPolicy" -as [type])) {
 <# Internet Download Request #>
 Invoke-WebRequest -Uri $url -Outfile $output
 
-<# Begin Installing Automate with Server Name and Location ID#>
+<# Begin Installing Automate with Server Name and Location ID #>
 
 
 $SoftwareFullPath=$output
