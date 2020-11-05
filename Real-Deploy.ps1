@@ -1,21 +1,17 @@
-$url = "https://github.com/Underbee/Automate_Deploy/blob/main/Agent_Install_universal.exe"
-$output = "C:\Support\Automate"
-function Install-Automate {
-    param (
-        $servername=$args[0]
-        $locationID=$args[1]
-        $SoftwareFullPath = $output
-        $LogFullPath= 'C:\temp\AutomateLog'
-    )    
+$url = "https://github.com/Underbee/Automate_Deploy/raw/main/Agent_Install.MSI"
+$output = "C:\Users\admin\desktop\Automate-Module\Automate.msi"
 
-<# Install Automate#>
+    <# Install Automate#>
 
-if (-not (Test-Path C:\Support\Automate -PathType Container)) {
-    Try {mkdir "C:\Support\Automate"}
-    catch {Write-Error -Message "Unable to create Automate Directory, Download impossible!"}
-"File Downloaded Successfully!"
-}
-else {
+#if (-not (Test-Path C:\Support -PathType Container)) {
+    #Try {
+       # mkdir "C:\Support"
+       # takeown.exe /F C:\Support /A /R /D Y
+
+#}
+    #catch {Write-Error -Message "Unable to create Automate Directory, Download impossible!"}
+#"Folder-Created!"
+
 
 <# TLS/SSL Update before Internet Download #>
 
@@ -27,9 +23,8 @@ if ( -not ("TrustAllCertsPolicy" -as [type])) {
     public bool CheckValidationResult(
     ServicePoint srvPoint, X509Certificate certificate,
     WebRequest request, int certificateProblem) { return true; }
-}
-"@
-}
+"@}
+
 [System.Net.ServicePointManager]::CertificatePolicy = New-Object TrustAllCertsPolicy
 [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]'Ssl3,Tls,Tls11,Tls12'
 
@@ -40,7 +35,9 @@ Invoke-WebRequest -Uri $url -Outfile $output
 
 Write-host "====== $output -Server $servername -LocationID $locationID ======"
 pause
-$InstallExitCode = (Start-Process "msiexec.exe" -ArgumentList "/i $($SoftwareFullPath) /quiet /norestart LOCATION=$($LocationID) SERVERADDRESS=$($servername) /L*V $($LogFullPath)" -NoNewWindow -Wait -PassThru).ExitCode
+$SoftwareFullPath=$output
+
+$InstallExitCode = (Start-Process "msiexec.exe" -ArgumentList "/i $($SoftwareFullPath) /quiet /norestart /L*V $($LogFullPath)" -NoNewWindow -Wait -PassThru).ExitCode
 If ($InstallExitCode -eq 0) {
     If (!$Silent) {Write-Verbose "The Automate Agent Installer Executed Without Errors"}
 } Else {
@@ -51,8 +48,8 @@ If ($InstallExitCode -eq 0) {
     Write-Host "Installer will execute twice (KI 12002617)" -ForegroundColor Yellow
     $Date = (get-date -UFormat %Y-%m-%d_%H-%M-%S)
     $LogFullPath = "$env:windir\Temp\Automate_Agent_$Date.log"
-    $InstallExitCode = (Start-Process "msiexec.exe" -ArgumentList "/i $($SoftwareFullPath) /quiet /norestart LOCATION=$($LocationID) SERVERADDRESS=$($servername) /L*V $($LogFullPath)" -NoNewWindow -Wait -PassThru).ExitCode
+    $InstallExitCode = (Start-Process "msiexec.exe" -ArgumentList "/i $($SoftwareFullPath) /quiet /norestart /L*V $($LogFullPath)" -NoNewWindow -Wait -PassThru).ExitCode
     Write-Host "Automate Installer Exit Code: $InstallExitCode" -ForegroundColor Yellow
     Write-Host "Automate Installer Logs: $LogFullPath" -ForegroundColor Yellow
 }# End Else
-}# End Else
+Write-Host "Function Ran"
